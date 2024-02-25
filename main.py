@@ -1,6 +1,5 @@
 import openai
 
-my_openai_api = "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"
 
 
 response = openai.Image.create(
