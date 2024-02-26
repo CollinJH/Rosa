@@ -1,0 +1,37 @@
+# Import necessary libraries
+from google.cloud import videointelligence_v1p3beta1 as videointelligence
+
+# Replace with your project ID and credentials file path
+project_id = "rosa-415419"
+credentials_file = "path/to/your/credentials.json"
+
+# Create a video intelligence client
+client = videointelligence.VideoIntelligenceServiceClient.from_service_account_json(credentials_file)
+
+# Define the video input
+video_uri = "gs://your-bucket-name/your-video-file.mp4"  # Replace with your video URL or path
+
+# Specify the features you want to analyze
+features = [videointelligence.Feature.LABEL_DETECTION] 
+
+# Define the video context (optional)
+video_context = videointelligence.VideoContext(language_code="en-US")
+
+# Create the request object
+request = videointelligence.AnnotateVideoRequest(
+    input_uri=video_uri,
+    features=features,
+    video_context=video_context
+)
+
+# Send the request and get the response
+response = client.annotate_video(request=request)
+
+# Process the response (extract relevant information based on features)
+if response.error.message:
+    raise Exception(f"API error: {response.error.message}")
+
+for label_annotation in response.annotation_results[0].label_annotations:
+    # Extract label information and print
+    print(f"Label: {label_annotation.description}")
+    print(f"Score: {label_annotation.score}")
